@@ -1,5 +1,8 @@
 <?php
-
+	
+	//error_reporting(E_ALL, ~E_NOTICE);
+	//Sgut The Error Reporting 
+	error_reporting(false);
 	//Include the DB Configuration File
 	include_once('configuration.php');
 	include('includes/common-functions.php');
@@ -29,6 +32,8 @@
         		<li><strong>DBHost:</strong> <?php echo $whmcs_dbhost; ?></li>
         		<li><strong>DBUser:</strong> <?php echo $whmcs_dbuser; ?></li>
         		<li><strong>DBName:</strong> <?php echo $whmcs_dbname; ?></li>
+        		<li><strong>Connection Check:</strong> <?php echo $dbwhmcs_con->stat; ?></li>
+                
         	</ul>
         </div>
     	<div style="float:left; width:50%;">
@@ -37,6 +42,7 @@
             	<li><strong>DBHost:</strong> <?php echo $export_dbhost; ?></li>
             	<li><strong>DBUser:</strong> <?php echo $export_dbuser; ?></li>
             	<li><strong>DBName:</strong> <?php echo $export_dbname; ?></li>
+        		<li><strong>Connection Check:</strong> <?php echo $dbexport_con->stat; ?></li>
             
             </ul>
         
