@@ -35,13 +35,39 @@
 	//echo '<pre>';
 	//print_r($dbwhmcs_con->stat);
 
+	
+
+	// Create a Global Array of table products
 	function product_check($name) {
-		global $dbwhmcs_con;
-		
-		$product_check_query = mysqli_query($dbwhmcs_con, "select count(*) as result from tblproducts where name = '" . $name . "'");
-		$product_check = mysqli_fetch_array($product_check_query, MYSQLI_ASSOC);
-		
-		return $product_check['result'];
+		global $whmcs_products_array;
+		if(in_array($name,$whmcs_products_array)){
+			return true;
+		}
+		return false;
 	}
 
+	function get_product_id($name) {
+		global $whmcs_products_array;
+		if(in_array($name, $whmcs_products_array)){
+			$flipped_array = array_flip($whmcs_products_array);
+			return $flipped_array[$name];
+		}
+	}
+	
+	function customer_type_check($customer_type) {
+		global $whmcs_customer_types_array;
+		if(in_array($customer_type,$whmcs_customer_types_array)){
+			return true;
+		}
+		return false;
+	}
+
+	function get_customer_type_id($customer_type) {
+		global $whmcs_customer_types_array;
+		if(in_array($customer_type, $whmcs_customer_types_array)){
+			$flipped_array = array_flip($whmcs_customer_types_array);
+			return $flipped_array[$customer_type];
+		}
+	}
+	
 ?>

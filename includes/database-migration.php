@@ -2,7 +2,18 @@
 
 
 	//Database Connection
-	echo '<pre>';
+	//echo '<pre>';
+	
+	//WHMCS Products Array
+	
+	$whmcs_products_array = array();
+	$whmcs_products_select_query = mysqli_query($dbwhmcs_con , "select id, name from tblproducts");
+	while($whmcs_products_select = mysqli_fetch_array($whmcs_products_select_query , MYSQLI_ASSOC)) {
+			$whmcs_products_array[$whmcs_products_select['id']] = $whmcs_products_select['name'];
+	}
+	
+	
+	
 	//Select the products from theexport db 
 	$products_array = array();
 	$product_select_query = mysqli_query($dbexport_con , "select distinct descrizione from ordini_prodotti");
@@ -52,20 +63,59 @@
 			$_product_insert_sql_raw .= ' , ';
 		}
 	}	
-	echo $_product_insert_sql_raw;
+	//echo $_product_insert_sql_raw;
 	//print_r($products_array);
 	//echo  $product_check_result;
 	
-	
-	
-	
-	//$create_product_query = mysqli_query($dbwhmcs_con , " "
+	// Now Lets Add these Products.
+	//mysqli_query($dbwhmcs_con , $_product_insert_sql_raw);
 	
 	//mysqli_query(
 	
 	
+	//Lets Insert the type of orders and types of customers
+	
+	//Select all the WHMCS Customer Types.
+	$whmcs_customer_types_array = array();
+	$whmcs_customer_types_query = mysqli_query($dbwhmcs_con , "select id, groupname from tblclientgroups");
+	while($whmcs_customer_types = mysqli_fetch_array($whmcs_customer_types_query , MYSQLI_ASSOC)) {
+			$whmcs_products_array[$whmcs_customer_types['id']] = $whmcs_customer_types['groupname'];
+	}
+	
+	
+	//Select Export DB Customer Types:
+	$customer_type_array = array();
+	$customer_type_select_query = mysqli_query($dbexport_con , "select distinct descrizione from tipologie_utente");
+	while($customer_type_select = mysqli_fetch_array($customer_type_select_query , MYSQLI_ASSOC)) {
+		if(!customer_type_check($customer_type_select['descrizione'])) {
+			$customer_type_array[] = $customer_type_select['descrizione'];
+		} 
+	}
+	
+	//Now Lets Insert Them
+	$_customer_type_insert_sql_raw = "INSERT INTO tblclientgroups (groupname, groupcolour, discountpercent, susptermexempt, separateinvoices) VALUES ";
+
+	$_cnt = 0;
+	foreach( $customer_type_array as $customer_type ) {
+		$_cnt++;
+		$_customer_type_insert_sql_raw .= "('" . $customer_type . "', '#9CE0FF', '0', '', '')";
+		if($_cnt < count($customer_type_array)) {
+			$_customer_type_insert_sql_raw .= ' , ';
+		}
+	
+	}
 
 
+	//Now Lets Insert The Order Types:
+	//This may refer to as WHMCS Order Status.
+
+	/******************* ORDER TYPES NEEDS TO BE ADDED HERE ********************************************/
+	
+	//mysqli_query($dbwhmcs_con , $_customer_type_insert_sql_raw);
+	
+	
+
+	echo $_customer_type_insert_sql_raw;
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -76,8 +126,33 @@
 </head>
 
 <body>
+<h1>Products Have been Added, Do not Refresh.</h1>
 
-
+<form name="whmcsdb" action="index.php?action=form_submit2" method="post" enctype="multipart/form-data">
+	
+    	<div style="float:left; width:100%;">
+        
+        	<div style="float:left; width:50%;">
+            	<h2>Following Products have been added to following group.</h2>
+                <ul>
+				<?php
+                	foreach( $products_array as $product_name ) {
+				?>
+                	<li><strong><?php echo $product_name; ?></strong></li>
+                <?php	
+						
+					}
+				
+				?>
+                </ul>
+			</div>
+       		<div style="float:left; width:50%;">
+        
+       		</div>
+		</div>
+        <input type="submit" name="submit" value="Next" style="float:right;" />
+	
+</form>
 	
 
 

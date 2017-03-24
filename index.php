@@ -15,6 +15,10 @@
 		case 'form_submit':
 			include('includes/database-migration.php');
 		break;
+
+		case 'form_submit2':
+			include('includes/database-migration2.php');
+		break;
 		
 		default:
 			include('includes/show-index.php');
