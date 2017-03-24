@@ -3,6 +3,7 @@
 	//Include the DB Configuration File
 	include_once('configuration.php');
 	include('includes/common-functions.php');
+	include('includes/database-functions.php');
 
 ?>
 
@@ -20,7 +21,32 @@
 <!-- Verify the DB Crentials -->
 <form name="whmcsdb" action="index.php?action=form_submit" method="post" enctype="multipart/form-data">
 
-	<input type="submit" name="submit" value="Sync" />
+	<div style="float:left; width:100%;">
+    
+    	<div style="float:left; width:50%;">
+        	<h2>WHMCS DB Connection</h2>
+            <ul>
+        		<li><strong>DBHost:</strong> <?php echo $whmcs_dbhost; ?></li>
+        		<li><strong>DBUser:</strong> <?php echo $whmcs_dbuser; ?></li>
+        		<li><strong>DBName:</strong> <?php echo $whmcs_dbname; ?></li>
+        	</ul>
+        </div>
+    	<div style="float:left; width:50%;">
+        	<h2>Export DB Connection</h2>
+        	<ul>
+            	<li><strong>DBHost:</strong> <?php echo $export_dbhost; ?></li>
+            	<li><strong>DBUser:</strong> <?php echo $export_dbuser; ?></li>
+            	<li><strong>DBName:</strong> <?php echo $export_dbname; ?></li>
+            
+            </ul>
+        
+        </div>
+    
+    </div>
+
+    	<input type="submit" name="submit" value="Sync" style="float:right;" />
+
+	
 
 </form>
 
