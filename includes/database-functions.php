@@ -35,5 +35,13 @@
 	//echo '<pre>';
 	//print_r($dbwhmcs_con->stat);
 
+	function product_check($name) {
+		global $dbwhmcs_con;
+		
+		$product_check_query = mysqli_query($dbwhmcs_con, "select count(*) as result from tblproducts where name = '" . $name . "'");
+		$product_check = mysqli_fetch_array($product_check_query, MYSQLI_ASSOC);
+		
+		return $product_check['result'];
+	}
 
 ?>
