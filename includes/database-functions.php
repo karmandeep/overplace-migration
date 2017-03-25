@@ -70,4 +70,21 @@
 		}
 	}
 	
+	
+	function orderstatus_type_check($order_status_types) {
+		global $whmcs_order_status_types_array;
+		if(in_array($order_status_types,$whmcs_order_status_types_array)){
+			return true;
+		}
+		return false;
+	} 
+	
+	function get_orderstatus_type_id($order_status_types) {
+		global $whmcs_order_status_types_array;
+		if(in_array($order_status_types, $whmcs_order_status_types_array)){
+			$flipped_array = array_flip($whmcs_order_status_types_array);
+			return $flipped_array[$order_status_types];
+		}
+	}
+	
 ?>
