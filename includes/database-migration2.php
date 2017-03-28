@@ -15,9 +15,7 @@
 	while($export_client_data = mysqli_fetch_array($export_client_query , MYSQLI_ASSOC)) {
 		$customer_order_data = array();
 		$customer_orders_query = mysqli_query($dbexport_con , "select * from ordini where id_utente = '" . $export_client_data['id'] . "'");
-		
 		while($customer_orders = mysqli_fetch_array($customer_orders_query , MYSQLI_ASSOC)) {
-			
 			$customer_product_order_data = array();		
 			//Lets Get the Ordered products.
 			$customer_product_orders_query = mysqli_query($dbexport_con , "select * from ordini_prodotti where id_ordine = '" . $customer_orders['id'] . "'");
@@ -27,9 +25,12 @@
 			//print_r($customer_orders);
 			$customer_order_data[] = array('order' => $customer_orders, 'ordered_products' => $customer_product_order_data);
 		}
-		
 		$export_data_sql_array[] = array('customerdetails' => $export_client_data, 'orders' => $customer_order_data);
 	}
+	
+	
+	//Now Let Us Insert This Array Data into the WHMCS Database.
+	
 	
 	print_r($export_data_sql_array);
 

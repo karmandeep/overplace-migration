@@ -35,6 +35,31 @@
 	//echo '<pre>';
 	//print_r($dbwhmcs_con->stat);
 
+
+
+	//WHMCS Products Array
+	$whmcs_products_array = array();
+	$whmcs_products_query = mysqli_query($dbwhmcs_con , "select id, name from tblproducts");
+	while($whmcs_products = mysqli_fetch_array($whmcs_products_query , MYSQLI_ASSOC)) {
+			$whmcs_products_array[$whmcs_products['id']] = $whmcs_products['name'];
+	}
+
+	//Add the type of orders and types of customers	
+	//Select all the WHMCS Customer Types.
+	$whmcs_customer_types_array = array();
+	$whmcs_customer_types_query = mysqli_query($dbwhmcs_con , "select id, groupname from tblclientgroups");
+	while($whmcs_customer_types = mysqli_fetch_array($whmcs_customer_types_query , MYSQLI_ASSOC)) {
+			$whmcs_customer_types_array[$whmcs_customer_types['id']] = $whmcs_customer_types['groupname'];
+	}
+
+	//Select all the WHMCS Order Types or Order Statuses
+	$whmcs_order_status_types_array = array();
+	$whmcs_order_status_types_query = mysqli_query($dbwhmcs_con , "select id, title from tblorderstatuses");
+	while($whmcs_order_status_types = mysqli_fetch_array($whmcs_order_status_types_query , MYSQLI_ASSOC)) {
+			$whmcs_order_status_types_array[$whmcs_order_status_types['id']] = $whmcs_order_status_types['title'];
+	}
+	
+
 	
 
 	// Create a Global Array of table products

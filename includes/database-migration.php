@@ -4,24 +4,6 @@
 	//Database Connection
 	//echo '<pre>';
 	
-	//WHMCS Products Array
-	
-	$whmcs_products_array = array();
-	$whmcs_products_query = mysqli_query($dbwhmcs_con , "select id, name from tblproducts");
-	while($whmcs_products = mysqli_fetch_array($whmcs_products_query , MYSQLI_ASSOC)) {
-			$whmcs_products_array[$whmcs_products['id']] = $whmcs_products['name'];
-	}
-	
-	
-	
-	//Select the products from theexport db 
-	$products_array = array();
-	$products_query = mysqli_query($dbexport_con , "select distinct descrizione from ordini_prodotti");
-	while($products = mysqli_fetch_array($products_query , MYSQLI_ASSOC)) {
-		if(!product_check($products['descrizione'])) {
-			$products_array[] = $products['descrizione'];
-		} 
-	}
 	
 	//create a product group called old products in the WHMCS Database.
 	//First Check if exists
@@ -42,6 +24,17 @@
 		$group_id = mysqli_insert_id($dbwhmcs_con);
 		
 	}
+
+
+	//Select the products from theexport db 
+	$products_array = array();
+	$products_query = mysqli_query($dbexport_con , "select distinct descrizione from ordini_prodotti");
+	while($products = mysqli_fetch_array($products_query , MYSQLI_ASSOC)) {
+		if(!product_check($products['descrizione'])) {
+			$products_array[] = $products['descrizione'];
+		} 
+	}
+
 	
 	//Once we have the Group ID.
 	//Now lets insert products into this group. 
@@ -62,22 +55,15 @@
 				$_product_insert_sql_raw .= ' , ';
 			}
 		}	
+	
+	
 	}
+	
 	// Add the Products.
 	//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
 	//mysqli_query($dbwhmcs_con , $_product_insert_sql_raw);
 	
 	//echo $_product_insert_sql_raw;
-	
-	
-	//Add the type of orders and types of customers
-	
-	//Select all the WHMCS Customer Types.
-	$whmcs_customer_types_array = array();
-	$whmcs_customer_types_query = mysqli_query($dbwhmcs_con , "select id, groupname from tblclientgroups");
-	while($whmcs_customer_types = mysqli_fetch_array($whmcs_customer_types_query , MYSQLI_ASSOC)) {
-			$whmcs_customer_types_array[$whmcs_customer_types['id']] = $whmcs_customer_types['groupname'];
-	}
 	
 	
 	//Select Export DB Customer Types:
@@ -107,14 +93,7 @@
 	//mysqli_query($dbwhmcs_con , $_customer_type_insert_sql_raw);
 
 	//echo $_customer_type_insert_sql_raw;
-	
-	//Select all the WHMCS Order Types or Order Statuses
-	$whmcs_order_status_types_array = array();
-	$whmcs_order_status_types_query = mysqli_query($dbwhmcs_con , "select id, title from tblorderstatuses");
-	while($whmcs_order_status_types = mysqli_fetch_array($whmcs_order_status_types_query , MYSQLI_ASSOC)) {
-			$whmcs_order_status_types_array[$whmcs_order_status_types['id']] = $whmcs_order_status_types['title'];
-	}
-	
+
 	//Select Export DB Order Types:
 	$order_status_types_array = array();
 	$order_status_types_query = mysqli_query($dbexport_con , "select distinct descrizione from tipologie_ordine");
@@ -123,6 +102,7 @@
 			$order_status_types_array[] = $order_status_types['descrizione'];
 		} 
 	}
+	
 	
 	if(count($order_status_types_array) > 0) {
 		//Create Insert Statement.
@@ -146,6 +126,27 @@
 
 	//echo $order_status_type_insert_sql_raw;	
 
+
+	/******************We Also Need to Add Custom Field Client Identifier****************************/
+	/*
+	
+select tcf.relid as productid, tcfv.relid as hostingid, tcf.id as fieldid, tcf.fieldname, tcfv.value from tblcustomfields tcf,
+tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id = tcfv.fieldid;
+/*select * from tblcustomfields where fieldname = 'Client Identifier';*/
+/*select * from tblcustomfieldsvalues where relid = '26';*/	
+	
+	/*/
+	*/
+	if(count($products_array) > 0) {
+		foreach( $products_array as $product_name ) {
+			//echo $product_name;
+			$product_id = get_product_id($product_name);
+			
+		}
+		echo '<pre>';
+		//print_r($products_array);
+		exit;
+	}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
