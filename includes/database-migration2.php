@@ -8,13 +8,14 @@
 	$export_data_sql_array = array();
 	
 	//Let us first get the clients.
-	$export_client_sql = "select * from utenti";
+	$export_client_sql = "select u.*, tu.descrizione as tipologia_utente from utenti u, tipologie_utente tu where u.id_tipologia_utente = tu.id";
 	$export_client_query = mysqli_query($dbexport_con , $export_client_sql); 
 	
 	//$cnt = 0;
 	while($export_client_data = mysqli_fetch_array($export_client_query , MYSQLI_ASSOC)) {
 		$customer_order_data = array();
-		$customer_orders_query = mysqli_query($dbexport_con , "select * from ordini where id_utente = '" . $export_client_data['id'] . "'");
+		$customer_orders_query = mysqli_query($dbexport_con , "select o.*, tio.descrizione as tipologie_ordine from ordini o, tipologie_ordine tio where o.id_utente = '" . $export_client_data['id'] . "' and tio.id = o.id_tipologia_ordine");
+		
 		while($customer_orders = mysqli_fetch_array($customer_orders_query , MYSQLI_ASSOC)) {
 			$customer_product_order_data = array();		
 			//Lets Get the Ordered products.
