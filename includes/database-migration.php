@@ -1,28 +1,17 @@
 <?php
 
 
-	//Database Connection
-	//echo '<pre>';
-	
-	
-	//create a product group called old products in the WHMCS Database.
-	//First Check if exists
-	
+
+	//Product Group	
 	$product_group_check_query = mysqli_query($dbwhmcs_con , "select count(*) as result, id, name from tblproductgroups where name = 'Web Media Center OLD'");
 	$product_group_check = mysqli_fetch_array($product_group_check_query , MYSQLI_ASSOC);
 	if($product_group_check['result'] > 0) {
-		
 		//Get the ID and the Name
 		$group_id = $product_group_check['id'];
-		
-	
 	} else {
-	
 		//Insert the Data
 		$product_group_add_query = mysqli_query($dbwhmcs_con , "INSERT INTO tblproductgroups (name, headline, tagline, orderfrmtpl, disabledgateways, hidden, order, created_at, updated_at) VALUES ('Web Media Center OLD' , '', '', '', '', '1', '10', now(), now())");
-		
 		$group_id = mysqli_insert_id($dbwhmcs_con);
-		
 	}
 
 
@@ -35,14 +24,12 @@
 		} 
 	}
 
-	
 	//Once we have the Group ID.
 	//Now lets insert products into this group. 
 	if(count($products_array) > 0) {
 		$_product_insert_sql_raw = "INSERT INTO tblproducts (type, gid, name, description, hidden, showdomainoptions, welcomeemail, stockcontrol, qty, proratabilling, proratadate, proratachargenextmonth, paytype, allowqty, subdomain, autosetup, servertype, servergroup, configoption1, configoption2, configoption3, configoption4, configoption5, configoption6, configoption7, configoption8, configoption9, configoption10, configoption11, configoption12, configoption13, configoption14, configoption15, configoption16, configoption17, configoption18, configoption19, configoption20, configoption21, configoption22, configoption23, configoption24, freedomain, freedomainpaymentterms, freedomaintlds, recurringcycles, autoterminatedays, autoterminateemail, configoptionsupgrade, billingcycleupgrade, upgradeemail, overagesenabled, overagesdisklimit, overagesbwlimit, overagesdiskprice, overagesbwprice, tax, affiliateonetime, affiliatepaytype, affiliatepayamount, `order`, retired, is_featured, created_at, updated_at) VALUES ";
 		
 		$_cnt = 0;
-		//echo count($products_array);
 		foreach( $products_array as $product_name ) {
 			
 			
@@ -56,14 +43,14 @@
 			}
 		}	
 	
+		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
+		//mysqli_query($dbwhmcs_con , $_product_insert_sql_raw);
+		
+		//echo $_product_insert_sql_raw;
+
 	
 	}
 	
-	// Add the Products.
-	//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-	//mysqli_query($dbwhmcs_con , $_product_insert_sql_raw);
-	
-	//echo $_product_insert_sql_raw;
 	
 	
 	//Select Export DB Customer Types:
@@ -74,9 +61,9 @@
 			$customer_type_array[] = $customer_type['descrizione'];
 		} 
 	}
-	
+
+	//Now Lets Insert Them
 	if(count($customer_type_array) > 0) {
-		//Now Lets Insert Them
 		$_customer_type_insert_sql_raw = "INSERT INTO tblclientgroups (groupname, groupcolour, discountpercent, susptermexempt, separateinvoices) VALUES ";
 	
 		$_cnt = 0;
@@ -88,11 +75,13 @@
 			}
 		
 		}
-	}
-	//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-	//mysqli_query($dbwhmcs_con , $_customer_type_insert_sql_raw);
 
-	//echo $_customer_type_insert_sql_raw;
+		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
+		//mysqli_query($dbwhmcs_con , $_customer_type_insert_sql_raw);
+	
+		//echo $_customer_type_insert_sql_raw;
+
+	}
 
 	//Select Export DB Order Types:
 	$order_status_types_array = array();
@@ -103,13 +92,11 @@
 		} 
 	}
 	
-	
+	//Create Insert Statement.
 	if(count($order_status_types_array) > 0) {
-		//Create Insert Statement.
 		$order_status_type_insert_sql_raw = "INSERT INTO tblorderstatuses (title, color, showpending, showactive, showcancelled, sortorder) VALUES ";
 		
 		$_cnt = 0;
-		print_r($order_status_types_array);
 		foreach( $order_status_types_array as $order_status_type ) {
 			$_cnt++;
 			$order_status_type_insert_sql_raw .= "('" . $order_status_type . "', '#9CE0FF', '0', '', '', '')";
@@ -118,13 +105,17 @@
 			}
 		
 		}
+
+		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
+		//mysqli_query($dbwhmcs_con , $order_status_type_insert_sql_raw);
+
+		//echo $order_status_type_insert_sql_raw;
+
+
 	}
-	//echo $order_status_type_insert_sql_raw;
-	//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-	//mysqli_query($dbwhmcs_con , $order_status_type_insert_sql_raw);
 
 
-	//echo $order_status_type_insert_sql_raw;	
+
 
 
 	/******************We Also Need to Add Custom Field Client Identifier****************************/
@@ -137,15 +128,32 @@ tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id 
 	
 	/*/
 	*/
+	
+	
+	//Need Two Fields basically: Client Identifier And Client EmailAddress
 	if(count($products_array) > 0) {
+	
+		$config_options_insert_sql_raw = "INSERT INTO tblcustomfields (type, relid, fieldname, fieldtype, description, fieldoptions, regexpr, adminonly, required, showorder, showinvoice, sortorder, created_at, updated_at) VALUES ";
+		$_cnt = 0;
 		foreach( $products_array as $product_name ) {
-			//echo $product_name;
+			$_cnt++;
 			$product_id = get_product_id($product_name);
+
+			$config_options_insert_sql_raw .= "('product', '" . $product_id . "', 'Client Identifier', 'text', 'Unique identifier of the client for whom the service was ordered. It will be visible in the invoice and on orders.', '', '', '', 'on', 'on', 'on', '0', now(), now()) , ";
 			
+			$config_options_insert_sql_raw .= "('product', '" . $product_id . "', 'Client EmailAddress', 'text', 'Client Email Address From earlier system', '', '', '', 'on', 'on', 'on', '0', now(), now())";
+			
+			if($_cnt < count($products_array)) {
+				$config_options_insert_sql_raw .= ' , ';
+			}
+
 		}
-		echo '<pre>';
-		//print_r($products_array);
-		exit;
+
+		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
+		//mysqli_query($dbwhmcs_con , $config_options_insert_sql_raw);
+
+		//echo $config_options_insert_sql_raw;
+
 	}
 
 ?>
