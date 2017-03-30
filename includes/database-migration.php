@@ -141,7 +141,7 @@ tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id 
 
 			$config_options_insert_sql_raw .= "('product', '" . $product_id . "', 'Client Identifier', 'text', 'Unique identifier of the client for whom the service was ordered. It will be visible in the invoice and on orders.', '', '', '', 'on', 'on', 'on', '0', now(), now()) , ";
 			
-			$config_options_insert_sql_raw .= "('product', '" . $product_id . "', 'Client EmailAddress', 'text', 'Client Email Address From earlier system', '', '', '', 'on', 'on', 'on', '0', now(), now())";
+			$config_options_insert_sql_raw .= "('client', '0', 'Client EmailAddress', 'text', 'Client Email Address From earlier system', '', '', '', 'on', 'on', 'on', '0', now(), now())";
 			
 			if($_cnt < count($products_array)) {
 				$config_options_insert_sql_raw .= ' , ';

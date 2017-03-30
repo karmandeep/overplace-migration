@@ -31,8 +31,69 @@
 	
 	
 	//Now Let Us Insert This Array Data into the WHMCS Database.
+	if(count($export_data_sql_array) > 0) {
+		//Create Bulk Insert SQL x3
+		//Let us First insert the customer
+		foreach($export_data_sql_array as $key => $value) {
+			
+			//Single Insert SQL
+			$customer_import_sql_raw = "INSERT INTO tblclients (firstname, lastname, companyname, email, address1, address2, city, state, postcode, country, phonenumber, password, authmodule, authdata, currency, defaultgateway, credit, taxexempt, latefeeoveride, overideduenotices, separateinvoices, disableautocc, datecreated, notes, billingcid, securityqid, securityqans, groupid, cardtype, cardlastfour, cardnum, startdate, expdate, issuenumber, bankname, banktype, bankcode, bankacct, gatewayid, lastlogin, ip, host, status, language, pwresetkey, emailoptout, overrideautoclose, allow_sso, email_verified, created_at, updated_at, pwresetexpiry)";
+			
+			
+			$customer_import_sql_raw .= " VALUES ('" . $value['customerdetails']['nome'] . "', '" . $value['customerdetails']['cognome'] . "', '" . $value['customerdetails']['ragione_sociale'] . "', '" . $value['customerdetails']['email'] . "', '" . $value['customerdetails']['indirizzo'] . "', '" . $value['customerdetails']['reigone'] . "', '" . $value['customerdetails']['citta'] . "', '" . $value['customerdetails']['provincia'] . "', '" . $value['customerdetails']['cap'] . "', '" . $value['customerdetails']['stato'] . "', '" . $value['customerdetails']['telefono'] . "', '" . generateClientPW($value['customerdetails']['password']) . "', '', '', '1', 'paypal', '0.00', '0', '0', '0', '0', '0', now(), 'Migrated From Old system', '0', '0', '', '" . get_customer_type_id($value['customerdetails']['tipologia_utente']) . "', '', '', '', '', '', '', '', '', '', '', '', '0000-00-00 00:00:00', '212.39.6.250', '250-6.ppp.reteradio.it', 'Inactive', 'italian', '', '0', '0', '1', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+			
+			/***UnComment this once its live****/
+			//mysqli_query($dbwhmcs_con , $customer_import_sql_raw);
+			$customer_id = mysqli_insert_id($dbwhmcs_con);
+			
+			
+			//Insert the Client EmailAddress and The SalesTax Field
+			//Let us get the custom fieldid
+			
+			$customer_salestax_field_id = get_custom_field('Sales Tax Code (VAT Registration Number)');
+			
+			$customer_salestax_import_sql_raw = "INSERT INTO tblcustomfieldsvalues (fieldid, relid, value) VALUES ('" . $customer_salestax_field_id . "' , '" . $customer_id . "' , '" . $value['customerdetails']['partita_iva'] . "');";
+			
+			/***UnComment this once its live****/
+			//mysqli_query($dbwhmcs_con , $customer_salestax_import_sql_raw);
+			
+			//Now Let Us Insert the orders
+			foreach($value['orders'] as $subkey => $subvalue ) {
+			
+				$order_import_sql_raw = "INSERT INTO tblorders (userid, contactid, date, nameservers, transfersecret, renewals, promocode, promotype, promovalue, orderdata, amount, paymentmethod, invoiceid, status, ipaddress, fraudmodule, fraudoutput, notes)";
+
+
+				$order_import_sql_raw .= " VALUES ('" . $customer_id . "', '0', now(), 'ns1.whmcs.t6tv.eu,ns2.whmcs.t6tv.eu', '', '', '', '', '', 'a:0:{}', '" . $subvalue['order']['importo'] . "', 'banktransfer', '0', '" . get_orderstatus_type_id($subvalue['order']['tipologie_ordine']) . "', '212.39.6.250', '', '', 'Migrated From Old system ');";
+				
+				//mysqli_query($dbwhmcs_con , $order_import_sql_raw);
+				$order_id = mysqli_insert_id($dbwhmcs_con);
+				
+				//Now lets insert the ordered_products
+				
+				foreach( $subvalue['ordered_products'] as $keyindex => $ordered_products ) {
+					//This Goes into tblhosting
+					
+					$ordered_products_sql_raw = "INSERT INTO tblhosting (userid, orderid, packageid, server, regdate, domain, paymentmethod, firstpaymentamount, amount, billingcycle, nextduedate, nextinvoicedate, termination_date, completed_date, domainstatus, username, password, notes, subscriptionid, promoid, suspendreason, overideautosuspend, overidesuspenduntil, dedicatedip, assignedips, ns1, ns2, diskusage, disklimit, bwusage, bwlimit, lastupdate, created_at, updated_at )";
+					
+					$ordered_products_sql_raw .= " VALUES ();";
+					
+					print_r($ordered_products);
+						
+					
+				}
+				
+				//echo $order_import_sql_raw;
+				//echo "\r\n";
+				
+			}
+			
+			
+			
+		}
 	
+	}
 	
+	//echo $customer_import_sql_raw;
 	print_r($export_data_sql_array);
 
 	

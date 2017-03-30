@@ -29,12 +29,6 @@
 		die("Database " . $export_dbname . " selection failed: " . mysqli_error());
 	}	
 	
-	//mysqli_select_db($dbwhmcs_con, $whmcs_dbname);
-	//mysqli_select_db($dbexport_con, $export_dbname);
-
-	//echo '<pre>';
-	//print_r($dbwhmcs_con->stat);
-
 
 
 	//WHMCS Products Array
@@ -60,6 +54,14 @@
 	}
 	
 
+	$whmcs_custom_fields_array = array();
+	$whmcs_custom_fields_query = mysqli_query($dbwhmcs_con , "select id, type, fieldname, relid from tblcustomfields");
+	while($whmcs_custom_fields = mysqli_fetch_array($whmcs_custom_fields_query , MYSQLI_ASSOC)) {
+		$whmcs_custom_fields_array[$whmcs_custom_fields['id']] = array('type' => $whmcs_custom_fields['type'],
+																	   'relid' => $whmcs_custom_fields['relid'], 
+																	   'fieldname' => $whmcs_custom_fields['fieldname']);
+	}
+	
 	
 
 	// Create a Global Array of table products
@@ -112,6 +114,26 @@
 		}
 	}
 	
-	
-	//Config Option ID by Name and product ID.
+	function get_custom_field($name, $type = 'client', $relid = 0) {
+		global $whmcs_custom_fields_array;
+
+		if(count($whmcs_custom_fields_array) > 0) {
+			foreach($whmcs_custom_fields_array as $id => $value) {
+				if($type === 'client' && $relid == 0) {
+					if($value['fieldname'] === $name) {
+						return $id;
+					}
+				} else {
+					if($value['fieldname'] === $name && $value['type'] === '' && $value['relid'] == $relid) {
+						return $id;
+					}
+				}
+				
+			}
+		
+		}
+
+		return false;
+		
+	}	
 ?>
