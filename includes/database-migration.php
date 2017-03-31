@@ -161,18 +161,18 @@ tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Migrating Data......</title>
+<title>Migrazione dei dati ......</title>
 </head>
 
 <body>
-<h1>Products Have been Added, Do not Refresh.</h1>
+<h1>Prodotti sono stati aggiunti, non Refresh.</h1>
 
 <form name="whmcsdb" action="index.php?action=form_submit2" method="post" enctype="multipart/form-data">
 	
     	<div style="float:left; width:100%;">
         
         	<div style="float:left; width:50%;">
-            	<h2>Following Products have been added to following group.</h2>
+            	<h2>Seguenti prodotti sono stati aggiunti al gruppo seguente.</h2>
                 <ul>
 				<?php
                 	foreach( $products_array as $product_name ) {
@@ -189,7 +189,7 @@ tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id 
         
        		</div>
 		</div>
-        <input type="submit" name="submit" value="Next" style="float:right;" />
+        <input type="submit" name="submit" value="Il prossimo" style="float:right;" />
 	
 </form>
 	
