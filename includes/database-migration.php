@@ -44,7 +44,7 @@
 		}	
 	
 		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-		//mysqli_query($dbwhmcs_con , $_product_insert_sql_raw);
+		mysqli_query($dbwhmcs_con , $_product_insert_sql_raw);
 		
 		//echo $_product_insert_sql_raw;
 
@@ -77,7 +77,7 @@
 		}
 
 		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-		//mysqli_query($dbwhmcs_con , $_customer_type_insert_sql_raw);
+		mysqli_query($dbwhmcs_con , $_customer_type_insert_sql_raw);
 	
 		//echo $_customer_type_insert_sql_raw;
 
@@ -107,7 +107,7 @@
 		}
 
 		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-		//mysqli_query($dbwhmcs_con , $order_status_type_insert_sql_raw);
+		mysqli_query($dbwhmcs_con , $order_status_type_insert_sql_raw);
 
 		//echo $order_status_type_insert_sql_raw;
 
@@ -139,9 +139,9 @@ tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id 
 			$_cnt++;
 			$product_id = get_product_id($product_name);
 
-			$config_options_insert_sql_raw .= "('product', '" . $product_id . "', 'Client Identifier', 'text', 'Unique identifier of the client for whom the service was ordered. It will be visible in the invoice and on orders.', '', '', '', 'on', 'on', 'on', '0', now(), now()) , ";
+			$config_options_insert_sql_raw .= "('product', '" . $product_id . "', 'Client Identifier', 'text', 'Unique identifier of the client for whom the service was ordered. It will be visible in the invoice and on orders.', '', '', '', 'on', 'on', 'on', '0', now(), now())  ";
 			
-			$config_options_insert_sql_raw .= "('client', '0', 'Client EmailAddress', 'text', 'Client Email Address From earlier system', '', '', '', 'on', 'on', 'on', '0', now(), now())";
+			//$config_options_insert_sql_raw .= "('client', '0', 'Client EmailAddress', 'text', 'Client Email Address From earlier system', '', '', '', 'on', 'on', 'on', '0', now(), now())";
 			
 			if($_cnt < count($products_array)) {
 				$config_options_insert_sql_raw .= ' , ';
@@ -150,12 +150,18 @@ tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id 
 		}
 
 		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-		//mysqli_query($dbwhmcs_con , $config_options_insert_sql_raw);
+		mysqli_query($dbwhmcs_con , $config_options_insert_sql_raw);
 
 		//echo $config_options_insert_sql_raw;
 
 	}
 
+	//Insert
+	//Config Option Client EmailAddress
+	$config_options_insert_sql_raw = "INSERT INTO tblcustomfields (type, relid, fieldname, fieldtype, description, fieldoptions, regexpr, adminonly, required, showorder, showinvoice, sortorder, created_at, updated_at) VALUES ('client', '0', 'Client EmailAddress', 'text', 'Client Email Address From earlier system', '', '', '', 'on', 'on', 'on', '0', now(), now())";
+	
+	mysqli_query($dbwhmcs_con , $config_options_insert_sql_raw);
+	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
