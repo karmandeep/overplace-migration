@@ -9,11 +9,11 @@
 		//Get the ID and the Name
 		$group_id = $product_group_check['id'];
 	} else {
+
 		//Insert the Data
-		$product_group_add_query = mysqli_query($dbwhmcs_con , "INSERT INTO tblproductgroups (name, headline, tagline, orderfrmtpl, disabledgateways, hidden, order, created_at, updated_at) VALUES ('Web Media Center OLD' , '', '', '', '', '1', '10', now(), now())");
+		$product_group_add_query = mysqli_query($dbwhmcs_con , "INSERT INTO tblproductgroups (name, headline, tagline, orderfrmtpl, disabledgateways, hidden, created_at, updated_at) VALUES ('Web Media Center OLD' , '', '', '', '', '1', now(), now())");
 		$group_id = mysqli_insert_id($dbwhmcs_con);
 	}
-
 
 	//Select the products from theexport db 
 	$products_array = array();
@@ -27,26 +27,29 @@
 	//Once we have the Group ID.
 	//Now lets insert products into this group. 
 	if(count($products_array) > 0) {
-		$_product_insert_sql_raw = "INSERT INTO tblproducts (type, gid, name, description, hidden, showdomainoptions, welcomeemail, stockcontrol, qty, proratabilling, proratadate, proratachargenextmonth, paytype, allowqty, subdomain, autosetup, servertype, servergroup, configoption1, configoption2, configoption3, configoption4, configoption5, configoption6, configoption7, configoption8, configoption9, configoption10, configoption11, configoption12, configoption13, configoption14, configoption15, configoption16, configoption17, configoption18, configoption19, configoption20, configoption21, configoption22, configoption23, configoption24, freedomain, freedomainpaymentterms, freedomaintlds, recurringcycles, autoterminatedays, autoterminateemail, configoptionsupgrade, billingcycleupgrade, upgradeemail, overagesenabled, overagesdisklimit, overagesbwlimit, overagesdiskprice, overagesbwprice, tax, affiliateonetime, affiliatepaytype, affiliatepayamount, `order`, retired, is_featured, created_at, updated_at) VALUES ";
 		
-		$_cnt = 0;
 		foreach( $products_array as $product_name ) {
 			
+			$_product_insert_sql_raw = "INSERT INTO tblproducts (type, gid, name, description, hidden, showdomainoptions, welcomeemail, stockcontrol, qty, proratabilling, proratadate, proratachargenextmonth, paytype, allowqty, subdomain, autosetup, servertype, servergroup, configoption1, configoption2, configoption3, configoption4, configoption5, configoption6, configoption7, configoption8, configoption9, configoption10, configoption11, configoption12, configoption13, configoption14, configoption15, configoption16, configoption17, configoption18, configoption19, configoption20, configoption21, configoption22, configoption23, configoption24, freedomain, freedomainpaymentterms, freedomaintlds, recurringcycles, autoterminatedays, autoterminateemail, configoptionsupgrade, billingcycleupgrade, upgradeemail, overagesenabled, overagesdisklimit, overagesbwlimit, overagesdiskprice, overagesbwprice, tax, affiliateonetime, affiliatepaytype, affiliatepayamount, `order`, retired, is_featured, created_at, updated_at) VALUES ";
+
 			
-			//Lets First Check, and then add this value.
-			$_cnt++;
 			$_product_insert_sql_raw .= "('other', '" . $group_id . "', '" . $product_name . "', '" . $product_name . "', '1', 0, 0, 0, 0, 0, 0, 0, 'onetime', 0, '', '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, 0, '', 0, '', 0, 0, '0.0000', '0.0000', '1', '0', '', '0.00', 0, 0, 0, now(), now())";
 			//echo $value;
 	
-			if($_cnt < count($products_array)) {
-				$_product_insert_sql_raw .= ' , ';
-			}
-		}	
+
+			//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
+			mysqli_query($dbwhmcs_con , $_product_insert_sql_raw);
+			$product_id = mysqli_insert_id($dbwhmcs_con);
 	
-		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-		mysqli_query($dbwhmcs_con , $_product_insert_sql_raw);
-		
-		//echo $_product_insert_sql_raw;
+			$config_options_insert_sql_raw = "INSERT INTO tblcustomfields (type, relid, fieldname, fieldtype, description, fieldoptions, regexpr, adminonly, required, showorder, showinvoice, sortorder, created_at, updated_at) VALUES ";
+
+			$config_options_insert_sql_raw .= "('product', '" . $product_id . "', 'Client Identifier', 'text', 'Unique identifier of the client for whom the service was ordered. It will be visible in the invoice and on orders.', '', '', '', 'on', 'on', 'on', '0', now(), now())  ";
+			
+
+			//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
+			mysqli_query($dbwhmcs_con , $config_options_insert_sql_raw);
+
+		}	
 
 	
 	}
@@ -131,30 +134,6 @@ tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id 
 	
 	
 	//Need Two Fields basically: Client Identifier And Client EmailAddress
-	if(count($products_array) > 0) {
-	
-		$config_options_insert_sql_raw = "INSERT INTO tblcustomfields (type, relid, fieldname, fieldtype, description, fieldoptions, regexpr, adminonly, required, showorder, showinvoice, sortorder, created_at, updated_at) VALUES ";
-		$_cnt = 0;
-		foreach( $products_array as $product_name ) {
-			$_cnt++;
-			$product_id = get_product_id($product_name);
-
-			$config_options_insert_sql_raw .= "('product', '" . $product_id . "', 'Client Identifier', 'text', 'Unique identifier of the client for whom the service was ordered. It will be visible in the invoice and on orders.', '', '', '', 'on', 'on', 'on', '0', now(), now())  ";
-			
-			//$config_options_insert_sql_raw .= "('client', '0', 'Client EmailAddress', 'text', 'Client Email Address From earlier system', '', '', '', 'on', 'on', 'on', '0', now(), now())";
-			
-			if($_cnt < count($products_array)) {
-				$config_options_insert_sql_raw .= ' , ';
-			}
-
-		}
-
-		//UNCOMMENT THIS WHEN PUTTING IN TO ACTION
-		mysqli_query($dbwhmcs_con , $config_options_insert_sql_raw);
-
-		//echo $config_options_insert_sql_raw;
-
-	}
 
 	//Insert
 	//Config Option Client EmailAddress

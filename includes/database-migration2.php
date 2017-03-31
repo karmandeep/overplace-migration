@@ -92,6 +92,9 @@
 						mysqli_query($dbwhmcs_con , $ordered_products_sql_raw);
 						$relid = mysqli_insert_id($dbwhmcs_con);
 						
+						$fieldid = get_custom_field('Client Identifier' , 'product' , get_product_id($ordered_products['descrizione']));
+						//echo 123;
+
 						//Now Lets Insert the Client Identifier Field.
 						//Let first get the customfieldsid
 						$fieldid = get_custom_field('Client Identifier' , 'product' , get_product_id($ordered_products['descrizione']));
@@ -107,24 +110,13 @@
 					
 				}
 				
-				//echo $ordered_products_sql_raw;
-				//echo "\r\n";
 				
 			}
-			
-			
 			
 		}
 	
 	}
 	
-	//echo $customer_import_sql_raw;
-	//print_r($export_data_sql_array);
-
-	
-	//echo 1;
-	
-	//exit;
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

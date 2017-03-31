@@ -20,6 +20,10 @@
 			include('includes/database-migration2.php');
 		break;
 		
+		case 'removeclients':
+			include('includes/database-migration3.php');
+		break;
+		
 		default:
 			include('includes/show-index.php');
 		break;

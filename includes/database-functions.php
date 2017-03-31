@@ -124,8 +124,9 @@
 						return $id;
 					}
 				} else {
-					if($value['fieldname'] === $name && $value['type'] === '' && $value['relid'] == $relid) {
+					if($value['fieldname'] === $name  and $value['type'] === $type and $value['relid'] == $relid) {
 						return $id;
+						
 					}
 				}
 				
