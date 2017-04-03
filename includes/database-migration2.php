@@ -29,6 +29,8 @@
 		$export_data_sql_array[] = array('customerdetails' => $export_client_data, 'orders' => $customer_order_data);
 	}
 	
+
+
 	
 	//Now Let Us Insert This Array Data into the WHMCS Database.
 	if(count($export_data_sql_array) > 0) {
@@ -68,15 +70,17 @@
 			
 			//Now Let Us Insert the orders
 			foreach($value['orders'] as $subkey => $subvalue ) {
+
+				$orderstatus = get_orderstatus_type_id($subvalue['order']['tipologie_ordine']);
 			
 				$order_import_sql_raw = "INSERT INTO tblorders (userid, contactid, date, nameservers, transfersecret, renewals, promocode, promotype, promovalue, orderdata, amount, paymentmethod, invoiceid, status, ipaddress, fraudmodule, fraudoutput, notes)";
 
 
-				$order_import_sql_raw .= " VALUES ('" . $customer_id . "', '0', now(), 'ns1.whmcs.t6tv.eu,ns2.whmcs.t6tv.eu', '', '', '', '', '', 'a:0:{}', '" . $subvalue['order']['importo'] . "', 'banktransfer', '0', '" . get_orderstatus_type_id($subvalue['order']['tipologie_ordine']) . "', '212.39.6.250', '', '', 'Migrated From Old system ');";
+				$order_import_sql_raw .= " VALUES ('" . $customer_id . "', '0', '" . $subvalue['order']['data'] . "', 'ns1.whmcs.t6tv.eu,ns2.whmcs.t6tv.eu', '', '', '', '', '', 'a:0:{}', '" . $subvalue['order']['importo'] . "', 'banktransfer', '0', '" . $orderstatus . "', '212.39.6.250', '', '', 'Migrated From Old system ');";
 				
 				mysqli_query($dbwhmcs_con , $order_import_sql_raw);
 				$order_id = mysqli_insert_id($dbwhmcs_con);
-				
+
 				//Now lets insert the ordered_products
 				if(count($subvalue['ordered_products']) > 0) {
 
