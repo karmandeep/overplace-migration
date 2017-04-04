@@ -117,22 +117,7 @@
 
 	}
 
-
-
-
-
-	/******************We Also Need to Add Custom Field Client Identifier****************************/
-	/*
-	
-select tcf.relid as productid, tcfv.relid as hostingid, tcf.id as fieldid, tcf.fieldname, tcfv.value from tblcustomfields tcf,
-tblcustomfieldsvalues tcfv where tcf.fieldname = 'Client Identifier' and tcf.id = tcfv.fieldid;
-/*select * from tblcustomfields where fieldname = 'Client Identifier';*/
-/*select * from tblcustomfieldsvalues where relid = '26';*/	
-	
-	/*/
-	*/
-	
-	
+	/******************We Also Need to Add Custom Field Client Identifier****************************/	
 	//Need Two Fields basically: Client Identifier And Client EmailAddress
 
 	//Insert

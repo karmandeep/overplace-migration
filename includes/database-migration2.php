@@ -71,12 +71,11 @@
 			//Now Let Us Insert the orders
 			foreach($value['orders'] as $subkey => $subvalue ) {
 
-				$orderstatus = get_orderstatus_type_id($subvalue['order']['tipologie_ordine']);
 			
 				$order_import_sql_raw = "INSERT INTO tblorders (userid, contactid, date, nameservers, transfersecret, renewals, promocode, promotype, promovalue, orderdata, amount, paymentmethod, invoiceid, status, ipaddress, fraudmodule, fraudoutput, notes)";
 
 
-				$order_import_sql_raw .= " VALUES ('" . $customer_id . "', '0', '" . $subvalue['order']['data'] . "', 'ns1.whmcs.t6tv.eu,ns2.whmcs.t6tv.eu', '', '', '', '', '', 'a:0:{}', '" . $subvalue['order']['importo'] . "', 'banktransfer', '0', '" . $orderstatus . "', '212.39.6.250', '', '', 'Migrated From Old system ');";
+				$order_import_sql_raw .= " VALUES ('" . $customer_id . "', '0', '" . $subvalue['order']['data'] . "', 'ns1.whmcs.t6tv.eu,ns2.whmcs.t6tv.eu', '', '', '', '', '', 'a:0:{}', '" . $subvalue['order']['importo'] . "', 'banktransfer', '0', '" . $subvalue['order']['tipologie_ordine'] . "', '212.39.6.250', '', '', 'Migrated From Old system ');";
 				
 				mysqli_query($dbwhmcs_con , $order_import_sql_raw);
 				$order_id = mysqli_insert_id($dbwhmcs_con);
@@ -87,16 +86,27 @@
 
 					foreach( $subvalue['ordered_products'] as $keyindex => $ordered_products ) {
 
+						$today = strtotime(date('Y-m-d'));	
+
+						if( $ordered_products['data_scadenza'] === '0000-00-00' ) {
+							$servicestatus = "COMPLETED";
+						} else if( strtotime($ordered_products['data_scadenza'])  <= $today ) {
+							$servicestatus = "TERMINATED";
+						} else {
+							$servicestatus = "ACTIVE";
+						}
+						
+						
 						$ordered_products_sql_raw = "INSERT INTO tblhosting (userid, orderid, packageid, server, regdate, domain, paymentmethod, firstpaymentamount, amount, billingcycle, nextduedate, nextinvoicedate, termination_date, completed_date, domainstatus, username, password, notes, subscriptionid, promoid, suspendreason, overideautosuspend, overidesuspenduntil, dedicatedip, assignedips, ns1, ns2, diskusage, disklimit, bwusage, bwlimit, lastupdate, created_at, updated_at ) VALUES ";
 						
-						$ordered_products_sql_raw .= "('" . $customer_id . "', '" . $order_id . "', '" . get_product_id($ordered_products['descrizione']) . "', '0', '" . $ordered_products['data_attivazione'] . "', '', 'banktransfer', '0.00', '0.00', 'Annually', '" . $ordered_products['data_scadenza'] . "', '" . $ordered_products['data_scadenza'] . "', '0000-00-00', '0000-00-00', 'Active', '', '', 'Imported From Old System', '', '', '', '0', '0000-00-00', '', '', '', '', '0', '0', '0', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00')";
+						$ordered_products_sql_raw .= "('" . $customer_id . "', '" . $order_id . "', '" . get_product_id($ordered_products['descrizione']) . "', '0', '" . $ordered_products['data_attivazione'] . "', '', 'banktransfer', '0.00', '0.00', 'Annually', '" . $ordered_products['data_scadenza'] . "', '" . $ordered_products['data_scadenza'] . "', '0000-00-00', '0000-00-00', '" . $servicestatus . "', '', '', 'Imported From Old System', '', '', '', '0', '0000-00-00', '', '', '', '', '0', '0', '0', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00')";
 						
 							
 						/***UnComment this once its live****/
 						mysqli_query($dbwhmcs_con , $ordered_products_sql_raw);
 						$relid = mysqli_insert_id($dbwhmcs_con);
 						
-						$fieldid = get_custom_field('Client Identifier' , 'product' , get_product_id($ordered_products['descrizione']));
+						//$fieldid = get_custom_field('Client Identifier' , 'product' , get_product_id($ordered_products['descrizione']));
 						//echo 123;
 
 						//Now Lets Insert the Client Identifier Field.

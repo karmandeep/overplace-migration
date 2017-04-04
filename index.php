@@ -1,5 +1,5 @@
 <?php
-	
+
 	//error_reporting(E_ALL, ~E_NOTICE);
 	//Sgut The Error Reporting 
 	error_reporting(false);
